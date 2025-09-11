@@ -520,7 +520,7 @@ if (mysqli_num_rows($result) > 0) {
     }
     ?>
     <div class="header">
-        <h1>Nebulark</h1>
+        <h1>Nexus</h1>
         <nav>
             <a href="perfil.php">Perfil</a>
             <a href="meus_jogos.php" class="btn">Meus Jogos</a>
@@ -618,4 +618,5 @@ if (mysqli_num_rows($result) > 0) {
 </html>
 <?php
 mysqli_close($conexao);
+
 ?>
