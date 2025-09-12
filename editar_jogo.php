@@ -146,7 +146,7 @@ mysqli_close($conexao);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Jogo - Nebulark</title>
+    <title>Editar Jogo - Nexus</title>
     <link rel="stylesheet" href="estilo.css">
     <style>
         .wrapper {

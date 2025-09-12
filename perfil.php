@@ -24,7 +24,7 @@ $funcao = isset($_SESSION["funcao"]) ? htmlspecialchars($_SESSION["funcao"]) : "
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil - Nebulark</title>
+    <title>Perfil - Nexus</title>
     <link rel="stylesheet" href="estilo.css">
     <style>
         .wrapper {
@@ -92,7 +92,7 @@ $funcao = isset($_SESSION["funcao"]) ? htmlspecialchars($_SESSION["funcao"]) : "
         <i style="--clr:#2c0597;"></i>
         <div class="wrapper">
             <h2>Bem-vindo, <?php echo $nickname; ?>!</h2>
-            <p>Você está logado na sua conta Nebulark.</p>
+            <p>Você está logado na sua conta Nexus.</p>
             <div class="profile-info">
                 <p>Sua função: <strong><?php echo $funcao; ?></strong></p>
                 <p>Aqui você pode ver informações do seu perfil.</p>

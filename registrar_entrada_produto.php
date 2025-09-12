@@ -67,7 +67,7 @@ mysqli_close($conexao);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Entrada de Produto - Nebulark</title>
+    <title>Registrar Entrada de Produto - Nexus</title>
     <link rel="stylesheet" href="estilo.css">
     <style>
         .wrapper {

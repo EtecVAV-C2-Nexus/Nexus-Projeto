@@ -30,7 +30,7 @@ if (mysqli_num_rows($result) > 0) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nebulark - Catálogo de Jogos</title>
+    <title>Nexus - Catálogo de Jogos</title>
     <link rel="stylesheet" href="estilo.css">
     <style>
         body {
@@ -294,7 +294,7 @@ if (mysqli_num_rows($result) > 0) {
 
             .header nav a, .header .user-info a, .header .user-info span {
                 margin: 0;
-                padding: 6px 12px;/
+                padding: 6px 12px;
                 font-size: 1em;
             }
 
@@ -524,6 +524,7 @@ if (mysqli_num_rows($result) > 0) {
         <nav>
             <a href="perfil.php">Perfil</a>
             <a href="meus_jogos.php" class="btn">Meus Jogos</a>
+            
             <?php if ($gerente): ?>
                 <a href="adicionar_jogo.php">Adicionar Jogo</a>
                 <a href="funcionarios.php">Ver Funcionários</a>
@@ -532,6 +533,7 @@ if (mysqli_num_rows($result) > 0) {
                     <!-- Link para a página de registro de entrada de produtos -->
                     <a href="registrar_entrada_produto.php">Registrar Entrada de Produto</a>
                 <?php endif; ?>
+                <a href="Sobre.php" class="btn">Sobre</a>
         </nav>
         <div class="user-info">
             <span>Olá, <?php echo htmlspecialchars($_SESSION["nickname"]); ?>! (<?php echo htmlspecialchars($_SESSION["funcao"]); ?>)</span>
