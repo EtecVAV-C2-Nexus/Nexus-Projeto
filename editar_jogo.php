@@ -23,6 +23,7 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
             mysqli_stmt_store_result($stmt);
             if (mysqli_stmt_num_rows($stmt) == 1) {
                 mysqli_stmt_bind_result($stmt, $id_db, $nome_db, $descr_db, $preço_db, $imagem_db, $estoque_db);
+                $jogo = mysqli_fetch_assoc($resultado);
                 mysqli_stmt_fetch($stmt);
 
                 $nome = $nome_db;
@@ -30,6 +31,7 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
                 $preço = $preço_db;
                 $imagem_atual = $imagem_db;
                 $estoque = $estoque_db; 
+
             } else {
                 echo "Jogo não encontrado.";
                 redirect("index.php");
@@ -43,42 +45,14 @@ if (isset($_GET["id"]) && !empty(trim($_GET["id"]))) {
     }
 }
 // --- POST: Atualizar dados do jogo ---
-elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = $_POST["id"];
+if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-    // Validação do nome
-    if (empty(trim($_POST["nome"]))) {
-        $nome_err = "Por favor, insira o nome do jogo.";
-    } else {
-        $nome = trim($_POST["nome"]);
-    }
+    $nome = trim($_POST['nome'] ?? '');
+    $descr = trim($_POST['descr'] ?? '');
+    $preço = trim($_POST['preço'] ?? 0);
+    $estoque = trim($_POST['estoque'] ?? 0);
 
-    // Validação da descrição
-    $descr = trim($_POST["descr"]);
-    if (strlen($descr) > 500) {
-        $descr_err = "A descrição não pode ter mais de 500 caracteres.";
-    }
-
-    // Validação do preço
-    if (empty(trim($_POST["preço"]))) {
-        $preco_err = "Por favor, insira o preço do jogo.";
-    } elseif (!is_numeric(trim($_POST["preço"])) || trim($_POST["preço"]) < 0) {
-        $preco_err = "Por favor, insira um preço válido (número positivo).";
-    } else {
-        $preço = trim($_POST["preço"]);
-    }
-
-    // Validação do estoque
-    if (empty(trim($_POST["estoque"]))) {
-        $estoque_err = "Por favor, insira a quantidade em estoque.";
-    } elseif (!filter_var(trim($_POST["estoque"]), FILTER_VALIDATE_INT) || trim($_POST["estoque"]) < 0) {
-        $estoque_err = "Por favor, insira uma quantidade inteira positiva ou zero para o estoque.";
-    } else {
-        $estoque = trim($_POST["estoque"]);
-    }
-
-    // Imagem (mantém a atual se não houver upload novo)
-    $imagem_atual = $_POST["imagem_atual"];
+     $imagem_atual = $_POST["imagem_atual"];
     if (isset($_FILES["imagem"]) && $_FILES["imagem"]["error"] == 0) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
         if (in_array($_FILES["imagem"]["type"], $allowed_types)) {
@@ -88,54 +62,36 @@ elseif ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Se não houver erro, faz o UPDATE
-    if (empty($nome_err) && empty($descr_err) && empty($preco_err) && empty($imagem_err) && empty($estoque_err)) {
-        $sql = "UPDATE jogos SET nome = ?, descr = ?, preço = ?, imagem = ?, estoque = ? WHERE ID = ?";
-        if ($stmt = mysqli_prepare($conexao, $sql)) {
-            mysqli_stmt_bind_param($stmt, "ssdssi", $param_nome, $param_descr, $param_preço, $null, $param_estoque, $param_id);
 
-            $param_nome = $nome;
-            $param_descr = $descr;
-            $param_preço = $preço;
-            $param_estoque = $estoque;
-            $param_id = $id;
+    if(!$nome || !$estoque){
+        echo "preencha nome e/ou estoque";
+    } else {
+        $sql = "UPDATE jogos set nome = ?, descr = ?, preço = ?, imagem = ?, estoque = ? WHERE id = ?";
+        $stmt = mysqli_prepare($conexao, $sql);
+        if($stmt){
+            mysqli_stmt_bind_param($stmt, "sssiii", $nome, $descr, $preço, $null, $estoque, $id);
+            if(mysqli_stmt_execute($stmt)){
+                
+                $jogo = [
+                'nome' => $nome,
+                'descr' => $descr,
+                'preço' => $preço,
+                'estoque' => $estoque,
+                
+                ];
 
-            // Envia o BLOB manualmente
-            mysqli_stmt_send_long_data($stmt, 3, $imagem_atual);
-
-            if (mysqli_stmt_execute($stmt)) {
-                $success_message = "Jogo (produto) atualizado com sucesso!";
+                 
             } else {
-                echo "Ops! Erro ao atualizar: " . mysqli_error($conexao);
+                echo "erro ao atualizar: " . mysqli_error($conexao);
             }
             mysqli_stmt_close($stmt);
+        } else {
+            echo "erro ao preparar atualização";
         }
-    }
 
-    // Recarregar dados atualizados
-    $sql = "SELECT ID, nome, descr, preço, imagem, estoque FROM jogos WHERE ID = ?";
-    if ($stmt = mysqli_prepare($conexao, $sql)) {
-        mysqli_stmt_bind_param($stmt, "i", $param_id);
-        $param_id = $id;
-        if (mysqli_stmt_execute($stmt)) {
-            mysqli_stmt_store_result($stmt);
-            if (mysqli_stmt_num_rows($stmt) == 1) {
-                mysqli_stmt_bind_result($stmt, $id_db, $nome_db, $descr_db, $preço_db, $imagem_db, $estoque_db);
-                mysqli_stmt_fetch($stmt);
-                $nome = $nome_db;
-                $descr = $descr_db;
-                $preço = $preço_db;
-                $imagem_atual = $imagem_db;
-                $estoque = $estoque_db;
-            }
-        }
-        mysqli_stmt_close($stmt);
     }
 }
-else {
-    redirect("index.php");
-    exit();
-}
+   
 
 mysqli_close($conexao);
 ?>
