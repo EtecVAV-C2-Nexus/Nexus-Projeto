@@ -69,13 +69,14 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         $sql = "UPDATE jogos set nome = ?, descr = ?, preço = ?, imagem = ?, estoque = ? WHERE id = ?";
         $stmt = mysqli_prepare($conexao, $sql);
         if($stmt){
-            mysqli_stmt_bind_param($stmt, "sssiii", $nome, $descr, $preço, $null, $estoque, $id);
+            mysqli_stmt_bind_param($stmt, "sssibi", $nome, $descr, $preço, $imagem_atual, $estoque, $id);
             if(mysqli_stmt_execute($stmt)){
                 
                 $jogo = [
                 'nome' => $nome,
                 'descr' => $descr,
                 'preço' => $preço,
+                'imagem' => $imagem_atual
                 'estoque' => $estoque,
                 
                 ];
@@ -260,3 +261,4 @@ mysqli_close($conexao);
     </div>
 </body>
 </html>
+
