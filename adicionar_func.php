@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 
 require_once 'database.php';
 require_once 'funcoes.php';
@@ -76,15 +76,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+   
     // Valida a função
-    if (empty(trim($_POST["funcao"]))) {
-        $funcao_err = "Por favor, selecione uma função para o funcionário.";
-    } else {
-        $funcao = trim($_POST["funcao"]);
-        $allowed_functions = ['gerente', 'repositor'];
-        if (!in_array($funcao, $allowed_functions)) {
-            $funcao_err = "Função inválida selecionada.";
-        }
+if (empty(trim($_POST["funcao"]))) {
+    $funcao_err = "Por favor, selecione uma função para o funcionário.";
+} else {
+    $funcao = trim($_POST["funcao"]);
+    $allowed_functions = ['gerente', 'repositor', 'funcionario']; // Adicionado 'funcionario'
+    if (!in_array($funcao, $allowed_functions)) {
+        $funcao_err = "Função inválida selecionada.";
+    }
+}
+
     }
 
 
@@ -114,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     mysqli_close($conexao);
-}
+
 ?>
 
 <!DOCTYPE html>

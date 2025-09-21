@@ -1,80 +1,86 @@
-<?php
-// Inclui os arquivos de configuração do banco de dados e funções auxiliares
-
+<?php 
+session_start();
 require_once 'database.php';
 require_once 'funcoes.php';
 
-// Inicia a sessão se ainda não estiver iniciada
-
-// Se o usuário já estiver logado, redireciona para a página principal de jogos
 if (logado()) {
     redirect("index.php");
 }
 
-// Inicializa variáveis para nome de usuário, senha e mensagens de erro
-$nickname = $senha = "";
-$nickname_err = $password_err = $login_err = "";
+$login = $senha = "";
+$login_err = $senha_err = "";
 
-// Processa dados do formulário quando ele é enviado via POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // Valida o campo de nome de usuário
-    if (empty(trim($_POST["nickname"]))) {
-        $nickname_err = "Por favor, insira o nome de usuário.";
+    // Valida login
+    if (!isset($_POST["login"]) || empty(trim($_POST["login"]))) {
+        $login_err = "Por favor, insira seu nickname.";
     } else {
-        $nickname = trim($_POST["nickname"]);
+        $login = trim($_POST["login"]);
     }
 
-    // Valida o campo de senha
+    // Valida senha
     if (empty(trim($_POST["password"]))) {
-        $password_err = "Por favor, insira sua senha.";
+        $senha_err = "Por favor, insira sua senha.";
     } else {
-        $password = trim($_POST["password"]);
+        $senha = trim($_POST["password"]);
     }
 
-    // Se não houver erros nos campos de nome de usuário e senha
-    if (empty($nickname_err) && empty($password_err)) {
+    if (empty($login_err) && empty($senha_err)) {
+
+        // Verifica funcionários/gerentes
         $sql_func = "SELECT idfunc, username, senha, funcao FROM funcionarios WHERE username = ?";
-        $stmt_func = null;
-        $stmt_user = null;
+        if ($stmt = mysqli_prepare($conexao, $sql_func)) {
+            mysqli_stmt_bind_param($stmt, "s", $param_login);
+            $param_login = $login;
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_store_result($stmt);
 
-        // Tenta preparar e executar a instrução para funcionários
-        if ($stmt_func = mysqli_prepare($conexao, $sql_func)) {
-            mysqli_stmt_bind_param($stmt_func, "s", $param_nickname);
-            $param_nickname = $nickname;
-            if (mysqli_stmt_execute($stmt_func)) {
-                mysqli_stmt_store_result($stmt_func);
-
-                if (mysqli_stmt_num_rows($stmt_func) == 1) {
-                    mysqli_stmt_bind_result($stmt_func, $id, $nickname, $hashed_password, $funcao);
-                    if (mysqli_stmt_fetch($stmt_func)) {
-                        if (verify_password($password, $hashed_password)) {
-                            // Credenciais de funcionário são válidas, armazena na sessão
-                            $_SESSION["loggedin"] = true;
-                            $_SESSION["id"] = $id;
-                            $_SESSION["nickname"] = $nickname;
-                            $_SESSION["funcao"] = $funcao; // Armazena a função do funcionário
-
-                            // Redireciona para a página principal de jogos
-                            redirect("index.php");
-                        } else {
-                            $login_err = "Nome de usuário ou senha inválidos.";
-                        }
+            if (mysqli_stmt_num_rows($stmt) == 1) {
+                mysqli_stmt_bind_result($stmt, $id, $username, $hashed_password, $funcao);
+                if (mysqli_stmt_fetch($stmt)) {
+                    if (password_verify($senha, $hashed_password)) {
+                        $_SESSION["loggedin"] = true;
+                        $_SESSION["id"] = $id;
+                        $_SESSION["nickname"] = $username;
+                        $_SESSION["funcao"] = $funcao;
+                        redirect("index.php");
+                    } else {
+                        $login_err = "Login ou senha inválidos.";
                     }
                 }
             } else {
-                echo "Ops! Algo deu errado ao buscar funcionário. Por favor, tente novamente mais tarde. Erro: " . mysqli_error($conexao);
+                // Verifica clientes pelo nickname
+                $sql_cli = "SELECT id, username, senha, tipo FROM usuarios WHERE username = ?";
+                if ($stmt_cli = mysqli_prepare($conexao, $sql_cli)) {
+                    mysqli_stmt_bind_param($stmt_cli, "s", $param_login);
+                    $param_login = $login;
+                    mysqli_stmt_execute($stmt_cli);
+                    mysqli_stmt_store_result($stmt_cli);
+
+                    if (mysqli_stmt_num_rows($stmt_cli) == 1) {
+                        mysqli_stmt_bind_result($stmt_cli, $id, $username, $hashed_password, $tipo);
+                        if (mysqli_stmt_fetch($stmt_cli)) {
+                            if (password_verify($senha, $hashed_password)) {
+                                $_SESSION["loggedin"] = true;
+                                $_SESSION["id"] = $id;
+                                $_SESSION["nickname"] = $username;
+                                $_SESSION["funcao"] = $tipo;
+                                redirect("index.php"); // Página do cliente
+                            } else {
+                                $login_err = "Login ou senha inválidos.";
+                            }
+                        }
+                    } else {
+                        $login_err = "Login ou senha inválidos.";
+                    }
+                    mysqli_stmt_close($stmt_cli);
+                }
             }
-            mysqli_stmt_close($stmt_func);
-        } else {
-            echo "Ops! Algo deu errado na preparação da query de funcionário. Erro: " . mysqli_error($conexao);
+            mysqli_stmt_close($stmt);
         }
-
-
-                           
     }
 
-    // Fecha a conexão com o banco de dados
     mysqli_close($conexao);
 }
 ?>
@@ -89,32 +95,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
 <div class="anel">
-<i style="--clr:#69B578;"></i>
-  <i style="--clr:#247BA0;"></i>
-  <i style="--clr:#2c0597;"></i>
-  <div class="login">
+    <i style="--clr:#69B578;"></i>
+    <i style="--clr:#247BA0;"></i>
+    <i style="--clr:#2c0597;"></i>
+    <div class="login">
         <h2>Login</h2>
-        <?php
-        // Exibe mensagem de erro de login, se houver
-        if (!empty($login_err)) {
-            echo '<div class="error-message text-center">' . $login_err . '</div>';
-        }
-        ?>
+
+        <?php if (!empty($login_err)) echo '<div class="error-message">' . $login_err . '</div>'; ?>
+
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-
             <div class="inputBx">
-                <input type="text" placeholder="nickname" name="nickname" value="<?php echo htmlspecialchars($nickname); ?>">
-                <span class="error-message"><?php echo $nickname_err; ?></span>
+                <input type="text" name="login" placeholder="Nickname (ex: nome@123)" value="<?php echo htmlspecialchars($login); ?>">
             </div>
-
             <div class="inputBx">
-                <input type="password" placeholder="Password" name="password">
-                <span class="error-message"><?php echo $password_err; ?></span>
+                <input type="password" name="password" placeholder="Senha">
             </div>
             <div class="inputBx">
                 <input type="submit" value="Entrar">
             </div>
         </form>
+
+        <!-- Link de registro visível e centralizado -->
+        <div class="links">
+            <a href="registro.php">Quero me registrar</a>
+        </div>
     </div>
 </div>
 </body>

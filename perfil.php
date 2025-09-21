@@ -1,18 +1,15 @@
 <?php
-
-
+session_start();
 
 require_once 'funcoes.php';
-
 
 if (!logado()) {
     redirect("login.php");
 }
 
-
-   
-    if (isset($conexao)) { mysqli_close($conexao); }
-
+if (isset($conexao)) { 
+    mysqli_close($conexao); 
+}
 
 // Obtém o nome de usuário e a função da sessão
 $nickname = htmlspecialchars($_SESSION["nickname"]);
@@ -94,7 +91,9 @@ $funcao = isset($_SESSION["funcao"]) ? htmlspecialchars($_SESSION["funcao"]) : "
             <h2>Bem-vindo, <?php echo $nickname; ?>!</h2>
             <p>Você está logado na sua conta Nexus.</p>
             <div class="profile-info">
-                <p>Sua função: <strong><?php echo $funcao; ?></strong></p>
+                <?php if (strtolower($funcao) !== "cliente") : ?>
+                    <p>Sua função: <strong><?php echo $funcao; ?></strong></p>
+                <?php endif; ?>
                 <p>Aqui você pode ver informações do seu perfil.</p>
             </div>
             <a href="index.php" class="btn">Ver Jogos</a>

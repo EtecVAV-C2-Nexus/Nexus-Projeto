@@ -1,6 +1,9 @@
 <?php
 
-session_start();
+
+
+
+
 
 function redirect($location) {
     header("Location: " . $location);
