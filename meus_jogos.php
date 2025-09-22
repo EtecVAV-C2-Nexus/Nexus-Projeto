@@ -48,16 +48,36 @@ mysqli_close($conexao);
     <title>Meus Jogos - Nexus</title>
     <link rel="stylesheet" href="estilo.css">
     <style>
-   
+        .wrapper::-webkit-scrollbar {
+            width: 8px; 
+        }
+        
+        .wrapper::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3); 
+            border-radius: 10px;
+        }
+        
+        .wrapper::-webkit-scrollbar-thumb {
+            background-color: #35ff90; 
+            border-radius: 20px;
+            border: 2px solid rgba(0, 0, 0, 0); 
+            background-clip: padding-box; 
+        }
         .wrapper {
             background-color: rgba(0, 0, 0, 0.7);
             padding: 30px;
-            border-radius: 10px;
+            border-radius: 5px;
             text-align: center;
             color: #fff;
-            max-width: 900px; 
-            margin: 50px auto;
+            max-width: 900px;
+            max-height: 780px; 
+            margin: 15px auto;
             box-shadow: 0 0 20px rgba(0, 255, 144, 0.5);
+            overflow-y: auto;
+        }
+
+        .page-container {
+            text-align: center;
         }
 
         .wrapper h2 {
@@ -70,7 +90,7 @@ mysqli_close($conexao);
         .game-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+            gap: 20px;
             margin-top: 20px;
         }
 
@@ -171,6 +191,7 @@ mysqli_close($conexao);
             text-decoration: none;
             font-size: 1.1em;
             transition: color 0.3s ease;
+            position: relative;
         }
 
         .back-link:hover {
@@ -206,34 +227,37 @@ mysqli_close($conexao);
         <i style="--clr:#69B578;"></i>
         <i style="--clr:#247BA0;"></i>
         <i style="--clr:#2c0597;"></i>
-        <div class="wrapper">
+        <div class="page-container">
             <h2>Meus Jogos</h2>
+            <div class="wrapper">
 
-            <?php if (!empty($jogos_comprados)): ?>
-                <div class="game-list">
-                    <?php foreach ($jogos_comprados as $jogo): ?>
-                        <div class="game-card">
-                            <?php if (!empty($jogo['imagem'])): ?>
-                                <img src="data:image/jpeg;base64,<?php echo base64_encode($jogo['imagem']); ?>" alt="<?php echo htmlspecialchars($jogo['nome']); ?>">
-                            <?php else: ?>
-                                <img src="https://placehold.co/400x180/333/fff?text=Sem+Imagem" alt="Sem Imagem">
-                            <?php endif; ?>
-                            <div class="game-content">
-                                <h3><?php echo htmlspecialchars($jogo['nome']); ?></h3>
-                                <p class="description"><?php echo !empty($jogo['descr']) ? htmlspecialchars($jogo['descr']) : 'Nenhuma descrição disponível.'; ?></p>
-                                <div class="game-details">
-                                    <div class="preço">R$ <?php echo number_format($jogo['preço'], 2, ',', '.'); ?></div>
-                                    <button class="play-button">JOGAR</button>
+                <?php if (!empty($jogos_comprados)): ?>
+                    <div class="game-list">
+                        <?php foreach ($jogos_comprados as $jogo): ?>
+                            <div class="game-card">
+                                <?php if (!empty($jogo['imagem'])): ?>
+                                    <img src="data:image/jpeg;base64,<?php echo base64_encode($jogo['imagem']); ?>" alt="<?php echo htmlspecialchars($jogo['nome']); ?>">
+                                <?php else: ?>
+                                    <img src="https://placehold.co/400x180/333/fff?text=Sem+Imagem" alt="Sem Imagem">
+                                <?php endif; ?>
+                                <div class="game-content">
+                                    <h3><?php echo htmlspecialchars($jogo['nome']); ?></h3>
+                                    <p class="description"><?php echo !empty($jogo['descr']) ? htmlspecialchars($jogo['descr']) : 'Nenhuma descrição disponível.'; ?></p>
+                                    <div class="game-details">
+                                        <div class="preço">R$ <?php echo number_format($jogo['preço'], 2, ',', '.'); ?></div>
+                                        <button class="play-button">JOGAR</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <p class="no-games">Você ainda não comprou nenhum jogo. Visite o <a href="index.php" class="back-link" style="margin-top: 0;">Catálogo</a> para encontrar um!</p>
-            <?php endif; ?>
-
-            <a href="index.php" class="back-link">Voltar para o Catálogo</a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <p class="no-games">Você ainda não comprou nenhum jogo. Visite o <a href="index.php" class="back-link" style="margin-top: 0;">Catálogo</a> para encontrar um!</p>
+                <?php endif; ?>
+            </div>
+            <div class="meus_jogos">
+                <a href="index.php" class="btn">Voltar para o Catálogo</a>
+            </div>
         </div>
     </div>
 </body>

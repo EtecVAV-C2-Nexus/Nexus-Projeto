@@ -1,5 +1,5 @@
 <?php
-// página_pagamento.php
+session_start();
 $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
 ?>
 

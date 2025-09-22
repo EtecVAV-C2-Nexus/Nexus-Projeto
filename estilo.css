@@ -69,11 +69,11 @@ body {
   }
 }
 
-/* Formulário de Login/Registro/Adicionar Jogo */
+
 .login {
   position: absolute;
-  width: 300px; /* Largura padrão */
-  height: 100%; /* Altura padrão para Login/Registro */
+  width: 300px;
+  height: 100%; 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -95,7 +95,7 @@ body {
 
 .login .inputBx input {
   position: relative;
-  width: 100%; /* Ajustado para padding */
+  width: 100%; 
   padding: 12px 20px;
   background: transparent;
   border: 2px solid #fff;
@@ -104,16 +104,16 @@ body {
   color: #fff;
   box-shadow: none;
   outline: none;
-  box-sizing: border-box; /* Inclui padding na largura */
+  box-sizing: border-box; 
 }
 
 .login .inputBx input[type="submit"] {
   width: 100%;
-  background: #0078ff; /* Fallback */
-  background: linear-gradient(45deg, #35ff90, #2c0597); /* Gradiente */
+  background: #0078ff; 
+  background: linear-gradient(45deg, #35ff90, #2c0597); 
   border: none;
   cursor: pointer;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Sombra para botão */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); 
   transition: all 0.3s ease;
 }
 
@@ -135,7 +135,7 @@ body {
   align-items: center;
   justify-content: center;
   padding: 0 20px;
-  margin-top: 10px; /* Espaçamento */
+  margin-top: 10px; 
 }
 
 .login .links a {
@@ -146,7 +146,7 @@ body {
 }
 
 .login .links a:hover {
-  color: #35ff90; /* Cor de destaque ao passar o mouse */
+  color: #35ff90; /
 }
 
 form {
@@ -155,18 +155,18 @@ form {
   align-items: center;
   flex-direction: column;
   gap: 15px;
-  width: 100%; /* Garante que o formulário ocupe a largura disponível */
+  width: 100%; 
 }
 
 .error-message {
-    color: #ff4d4d; /* Cor vermelha para erros */
+    color: #ff4d4d; 
     font-size: 0.9em;
     margin-top: 5px;
     text-align: center;
     width: 100%;
 }
 
-/* Estilo para a página de perfil */
+
 .wrapper {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 30px;
@@ -188,7 +188,12 @@ form {
     color: #35ff90;
     text-shadow: 0 0 10px #35ff90;
 }
-
+h2 {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+    color: #35ff90;
+    text-shadow: 0 0 10px #35ff90;
+}
 .wrapper p {
     font-size: 1.1em;
     margin-bottom: 15px;
@@ -214,6 +219,19 @@ form {
     opacity: 0.9;
 }
 
+.meus_jogos .btn {
+    display: inline-block;
+    background: linear-gradient(45deg, #247BA0, #2c0597);
+    color: #fff;
+    padding: 10px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    margin: 10px 5px; /* Ajustado para botões múltiplos */
+}
+
 /* Responsividade geral para todos os formulários */
 @media (max-width: 600px) {
   .anel {
@@ -234,7 +252,7 @@ form {
   }
 
   .login .inputBx input {
-    width: 100%; /* Ocupa a largura total do container */
+    width: 100%; 
     font-size: 1em;
     padding: 10px 15px;
   }

@@ -82,13 +82,13 @@ if (empty(trim($_POST["funcao"]))) {
     $funcao_err = "Por favor, selecione uma função para o funcionário.";
 } else {
     $funcao = trim($_POST["funcao"]);
-    $allowed_functions = ['gerente', 'repositor', 'funcionario']; // Adicionado 'funcionario'
+    $allowed_functions = ['gerente', 'repositor', 'funcionario'];
     if (!in_array($funcao, $allowed_functions)) {
         $funcao_err = "Função inválida selecionada.";
     }
 }
 
-    }
+    
 
 
     if (empty($username_err) && empty($password_err) && empty($confirm_password_err) && empty($funcao_err) && empty($nome_completo_err) && empty($email_err)) {
@@ -115,7 +115,7 @@ if (empty(trim($_POST["funcao"]))) {
             echo "Ops! Algo deu errado ao preparar a declaração: " . mysqli_error($conexao) . ". Por favor, tente novamente mais tarde.";
         }
     }
-
+}
     mysqli_close($conexao);
 
 ?>
