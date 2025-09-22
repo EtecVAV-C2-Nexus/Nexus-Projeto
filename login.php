@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             } else {
                 // Verifica clientes pelo nickname
-                $sql_cli = "SELECT id, username, senha, tipo FROM usuarios WHERE username = ?";
+                $sql_cli = "SELECT idcliente, username, senha, tipo FROM usuarios WHERE username = ?";
                 if ($stmt_cli = mysqli_prepare($conexao, $sql_cli)) {
                     mysqli_stmt_bind_param($stmt_cli, "s", $param_login);
                     $param_login = $login;

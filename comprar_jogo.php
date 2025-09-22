@@ -12,6 +12,7 @@ if (!logado()) {
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idjogo"])) {
     $idjogo = filter_var($_POST["idjogo"], FILTER_SANITIZE_NUMBER_INT);
     $usuario = $_SESSION["id"];
+    $funcao_usuario = $_SESSION["funcao"];
 
     mysqli_begin_transaction($conexao);
 
@@ -50,9 +51,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["idjogo"])) {
         }
 
         // 3. Insere o registro de compra
-        $sql_insert = "INSERT INTO compras (usuario, idjogo) VALUES (?, ?)";
+        $sql_insert = "INSERT INTO compras (usuario, idjogo, funcao) VALUES (?, ?, ?)";
         if ($stmt_insert = mysqli_prepare($conexao, $sql_insert)) {
-            mysqli_stmt_bind_param($stmt_insert, "si", $usuario, $idjogo);
+            mysqli_stmt_bind_param($stmt_insert, "sis", $usuario, $idjogo, $funcao_usuario);
             mysqli_stmt_execute($stmt_insert);
             mysqli_stmt_close($stmt_insert);
         } else {

@@ -3,29 +3,29 @@ session_start();
 require_once "database.php";
 require_once "funcoes.php";
 
-$nickname = $email = $senha = $confirmar = "";
-$nickname_err = $email_err = $senha_err = $confirmar_err = "";
+$username = $email = $senha = $confirmar = "";
+$username_err = $email_err = $senha_err = $confirmar_err = "";
 
 // Se formulário enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // --- VALIDAR NICKNAME ---
-    if (empty(trim($_POST["nickname"]))) {
-        $nickname_err = "Por favor, insira seu nickname.";
-    } elseif (!str_contains(trim($_POST["nickname"]), "@")) {
-        $nickname_err = "O nickname deve conter @.";
+    // --- VALIDAR username ---
+    if (empty(trim($_POST["username"]))) {
+        $username_err = "Por favor, insira seu username.";
+    } elseif (!validate_nickname(trim($_POST["username"]))) {
+        $username_err = "O username deve conter entre 3 a 50 caracteres.";
     } else {
-        $sql = "SELECT id FROM usuarios WHERE username = ?";
+        $sql = "SELECT idcliente FROM usuarios WHERE username = ?";
         if ($stmt = mysqli_prepare($conexao, $sql)) {
-            mysqli_stmt_bind_param($stmt, "s", $param_nickname);
-            $param_nickname = trim($_POST["nickname"]);
+            mysqli_stmt_bind_param($stmt, "s", $param_username);
+            $param_username = trim($_POST["username"]);
 
             if (mysqli_stmt_execute($stmt)) {
                 mysqli_stmt_store_result($stmt);
                 if (mysqli_stmt_num_rows($stmt) == 1) {
-                    $nickname_err = "Este nickname já está cadastrado.";
+                    $username_err = "Este username já está cadastrado.";
                 } else {
-                    $nickname = trim($_POST["nickname"]);
+                    $username = trim($_POST["username"]);
                 }
             }
             mysqli_stmt_close($stmt);
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
         $email_err = "Formato de email inválido.";
     } else {
-        $sql = "SELECT id FROM usuarios WHERE email = ?";
+        $sql = "SELECT idcliente FROM usuarios WHERE email = ?";
         if ($stmt = mysqli_prepare($conexao, $sql)) {
             mysqli_stmt_bind_param($stmt, "s", $param_email);
             $param_email = trim($_POST["email"]);
@@ -75,19 +75,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // --- INSERIR NO BANCO ---
-    if (empty($nickname_err) && empty($email_err) && empty($senha_err) && empty($confirmar_err)) {
+    if (empty($username_err) && empty($email_err) && empty($senha_err) && empty($confirmar_err)) {
 
         // --- VERIFICA SE É O GERENTE ---
-        if ($nickname === "dontes") {
-            $tipo = "gerente"; // só cria gerente se o nickname for "dontes"
+        if ($username === "dontes") {
+            $tipo = "gerente"; // só cria gerente se o username for "dontes"
         } else {
             $tipo = "cliente"; // clientes normais
         }
 
         $sql = "INSERT INTO usuarios (username, email, senha, tipo) VALUES (?, ?, ?, ?)";
         if ($stmt = mysqli_prepare($conexao, $sql)) {
-            mysqli_stmt_bind_param($stmt, "ssss", $param_nickname, $param_email, $param_senha, $param_tipo);
-            $param_nickname = $nickname;
+            mysqli_stmt_bind_param($stmt, "ssss", $param_username, $param_email, $param_senha, $param_tipo);
+            $param_username = $username;
             $param_email = $email;
             $param_senha = password_hash($senha, PASSWORD_DEFAULT);
             $param_tipo = $tipo;
@@ -123,8 +123,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
 
         <div class="inputBx">
-            <input type="text" name="nickname" placeholder="Nickname" value="<?php echo htmlspecialchars($nickname); ?>">
-            <span class="error-message"><?php echo $nickname_err; ?></span>
+            <input type="text" name="username" placeholder="username" value="<?php echo htmlspecialchars($username); ?>">
+            <span class="error-message"><?php echo $username_err; ?></span>
         </div>
 
         <div class="inputBx">
