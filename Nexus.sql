@@ -122,7 +122,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`idcliente`, `username`, `senha`, `email`, `tipo`) VALUES
-(0, 'Testeregistro', '$2y$10$4YTjgKWiWh2cjsoLfCo.Sedqo9sLI17RptpeVS72Y8NtbZ4GpplkK', 'Registro@Teste.com', ''),
+(0, 'Testeregistro', '$2y$10$4YTjgKWiWh2cjsoLfCo.Sedqo9sLI17RptpeVS72Y8NtbZ4GpplkK', 'Registro@Teste.com', 'cliente'),
 (1, 'Testeregistro2', '$2y$10$jUlfiGvDI1Gq.lycTD1.A.f9FxHLEN0viygkXHn0mHDib.OR.EKtS', 'Registro2@Teste.com', 'cliente');
 
 --

@@ -1,5 +1,15 @@
 <?php
 session_start();
+
+// Verifica se o usuário realmente iniciou um processo de compra
+if (!isset($_SESSION['compra_pendente_idjogo'])) {
+    // Se não, impede o acesso direto à página e redireciona
+    $_SESSION['message'] = 'Nenhuma compra foi iniciada.';
+    $_SESSION['message_type'] = 'error';
+    header("Location: index.php");
+    exit();
+}
+
 $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
 ?>
 
@@ -9,6 +19,7 @@ $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Página de Pagamento </title>
+   <link rel="stylesheet" href="css/estilo.css">
   <style>
     :root{--bg:#0f1720;--card:#111827;--muted:#94a3b8;--accent:#16a34a;--glass:rgba(255,255,255,0.03)}
     *{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
@@ -21,14 +32,14 @@ $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
     .card{background:var(--card);padding:16px;border-radius:12px}
 
     .tabs{display:flex;gap:6px;margin-bottom:12px}
-    .tab{flex:1;text-align:center;padding:8px 6px;border-radius:8px;background:var(--glass);cursor:pointer;font-size:14px}
-    .tab.active{background:linear-gradient(90deg,#052b15,#0b5132);box-shadow:0 4px 18px rgba(3,79,46,0.25)}
+    .tab{flex:1;text-align:center;padding:8px 6px;border-radius:8px;background:linear-gradient(45deg, #247BA0, #2c0597);cursor:pointer;font-size:14px}
+    .tab.active{background:linear-gradient(90deg,#35ff90,#0b5132);box-shadow:0 4px 18px rgba(3,79,46,0.25)}
 
     .panel{display:none}
     .panel.active{display:block}
 
     .pix-code{background:#061b0f;border:1px dashed rgba(255,255,255,0.04);padding:12px;border-radius:8px;text-align:center;font-family:monospace;letter-spacing:0.6px}
-    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600; text-decoration: none;}
     .btn-ghost{background:transparent;color:var(--accent);border:1px solid rgba(22,163,74,0.12)}
     .btn-primary{background:var(--accent);color:#08220f;text-decoration:none}
 
@@ -42,6 +53,19 @@ $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
     .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
 
     .note{font-size:12px;color:var(--muted);margin-top:10px}
+    
+    .cancel-link {
+        color: #ffb4b4; 
+        font-size: 14px; 
+        text-decoration: none; 
+        display: block; 
+        text-align: center; 
+        margin-top: 16px;
+    }
+    .cancel-link:hover {
+        text-decoration: underline;
+    }
+
 
     @media (max-width:420px){.container{width:92%;padding:16px}}
   </style>
@@ -67,7 +91,8 @@ $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
         <div class="pix-code" id="pixCode">00020126360014BR.GOV.BCB.PIX0136pix-NEXUS-1234567895204<?php echo number_format($total,2,'',''); ?>530398654<?php echo number_format($total,2,'',''); ?></div>
         <div style="display:flex;justify-content:center;gap:8px;margin-top:12px">
           <button class="btn btn-ghost" id="copyPix">Copiar código</button>
-          <button class="btn btn-primary" id="pixOk">OK</button>
+          <!-- MODIFICADO: Redireciona para o processador -->
+          <a href="processar_pagamento.php?status=aprovado" class="btn btn-primary">OK</a>
         </div>
        
       </div>
@@ -77,7 +102,8 @@ $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
         <div class="boleto-number" id="boletoNumber">— — —</div>
         <div style="display:flex;justify-content:center;gap:8px;margin-top:12px">
           <button class="btn btn-ghost" id="genBoleto">Gerar boleto</button>
-          <button class="btn btn-primary" id="boletoOk">OK</button>
+           <!-- MODIFICADO: Redireciona para o processador -->
+          <a href="processar_pagamento.php?status=aprovado" class="btn btn-primary">OK</a>
         </div>
        
       </div>
@@ -104,7 +130,8 @@ $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
           </div>
 
           <div class="actions">
-            <button class="btn btn-ghost" id="cardCancel" type="button">Cancelar</button>
+             <!-- MODIFICADO: Redireciona para o processador com status=cancelado -->
+            <a href="processar_pagamento.php?status=cancelado" class="btn btn-ghost">Cancelar</a>
             <button class="btn btn-primary" id="cardPay" type="submit">Pagar</button>
           </div>
           <p class="note" id="cardMsg" style="display:none"></p>
@@ -112,11 +139,8 @@ $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
       </div>
     </div>
 
-    <!-- Botão para voltar ao início (aparece só após confirmar pagamento) -->
-    <div id="backHome" style="display:none;text-align:center;margin-top:16px">
-      <a href="index.php" class="btn btn-primary">Voltar para o início</a>
-    </div>
-
+    <!-- Botão para cancelar a compra -->
+    <a href="processar_pagamento.php?status=cancelado" class="cancel-link">Cancelar Compra e Voltar</a>
     
   </div>
 
@@ -136,19 +160,15 @@ $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
     document.getElementById('copyPix').addEventListener('click', ()=>{
       navigator.clipboard?.writeText(pixCodeEl.textContent).then(()=>{alert('Código PIX copiado!');});
     });
-    document.getElementById('pixOk').addEventListener('click', ()=>{
-      alert('Pagamento via PIX (simulado) confirmado.');
-      document.getElementById('backHome').style.display = 'block';
-    });
+    // REMOVIDO: O botão 'pixOk' agora é um link <a>, não precisa de JS.
+    // document.getElementById('pixOk').addEventListener('click', ...);
 
     function genBoletoNumber(){const parts=[];for(let i=0;i<5;i++) parts.push(Math.floor(Math.random()*90000)+10000);return parts.join(' ');}
     document.getElementById('genBoleto').addEventListener('click', ()=>{
       document.getElementById('boletoNumber').textContent = genBoletoNumber();
     });
-    document.getElementById('boletoOk').addEventListener('click', ()=>{
-      alert('Boleto (simulado) gerado e confirmado.');
-      document.getElementById('backHome').style.display = 'block';
-    });
+    // REMOVIDO: O botão 'boletoOk' agora é um link <a>, não precisa de JS.
+    // document.getElementById('boletoOk').addEventListener('click', ...);
 
     const cardNumber = document.getElementById('cardNumber');
     const exp = document.getElementById('exp');
@@ -165,15 +185,18 @@ $total = isset($_GET['amount']) ? floatval($_GET['amount']) : 49.90;
       if(!/^(0[1-9]|1[0-2])\/\d{2}$/.test(exp.value)){showCardMsg('Validade inválida (MM/AA)');return}
       if(cvc.value.length < 3){showCardMsg('CVC inválido');return}
       if(holder.value.trim().length < 3){showCardMsg('Nome do titular inválido');return}
-      showCardMsg('Pagamento processado (simulado). Obrigado!', true);
+      
+      showCardMsg('Pagamento processado (simulado). Redirecionando...', true);
+      
+      // MODIFICADO: Redireciona para o processador após a validação
       setTimeout(()=>{
-        alert('Pagamento com cartão (simulado) concluído.');
-        document.getElementById('backHome').style.display = 'block';
-      },300);
+        window.location.href = 'processar_pagamento.php?status=aprovado';
+      }, 500); // Meio segundo de delay para o usuário ler a mensagem
     });
-    document.getElementById('cardCancel').addEventListener('click', ()=>{
-      cardNumber.value='';exp.value='';cvc.value='';holder.value='';cardMsg.style.display='none';
-    });
+    
+    // O botão 'cardCancel' agora é um link <a>, não precisa de JS.
+    // document.getElementById('cardCancel').addEventListener('click', ...);
+
     function showCardMsg(text, ok=false){cardMsg.style.display='block';cardMsg.textContent=text;cardMsg.style.color=ok?'#8ef08a':'#ffb4b4';}
   </script>
 </body>

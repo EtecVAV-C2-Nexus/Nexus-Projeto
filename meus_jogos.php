@@ -46,8 +46,11 @@ mysqli_close($conexao);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Jogos - Nexus</title>
-    <link rel="stylesheet" href="estilo.css">
+    <link rel="stylesheet" href="css/estilo.css">
     <style>
+        body{
+            overflow: hidden;
+        }
         .wrapper::-webkit-scrollbar {
             width: 8px; 
         }
@@ -78,6 +81,15 @@ mysqli_close($conexao);
 
         .page-container {
             text-align: center;
+            position: relative;
+        }
+        .page-container h2 {
+            background: #000;
+            opacity: 0.9;
+            border-radius: 10px;
+            font-size: 2.5em;
+            color: #35ff90;
+            text-shadow: 0 0 15px #35ff90;
         }
 
         .wrapper h2 {

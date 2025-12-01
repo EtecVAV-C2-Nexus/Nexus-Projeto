@@ -34,7 +34,7 @@ mysqli_close($conexao);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lista de Funcionários - Nexus</title>
-    <link rel="stylesheet" href="estilo.css">
+    <link rel="stylesheet" href="css/estilo.css">
     <style>
         body {
             background: #1a1a2e;

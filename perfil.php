@@ -22,7 +22,7 @@ $funcao = isset($_SESSION["funcao"]) ? htmlspecialchars($_SESSION["funcao"]) : "
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil - Nexus</title>
-    <link rel="stylesheet" href="estilo.css">
+    <link rel="stylesheet" href="css/estilo.css">
     <style>
         .wrapper {
             background-color: rgba(0, 0, 0, 0.7);
@@ -96,7 +96,7 @@ $funcao = isset($_SESSION["funcao"]) ? htmlspecialchars($_SESSION["funcao"]) : "
                 <?php endif; ?>
                 <p>Aqui você pode ver informações do seu perfil.</p>
             </div>
-            <a href="index.php" class="btn">Ver Jogos</a>
+            <a href="index.php" class="btn">Catálogo</a>
             <a href="logout.php" class="btn">Sair da Conta</a>
             <a href="meus_jogos.php" class="btn">Meus Jogos</a>
             <a href="alterar_senha.php" class="btn">Alterar senha</a>
